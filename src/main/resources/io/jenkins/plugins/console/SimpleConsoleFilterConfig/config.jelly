@@ -1,0 +1,54 @@
+<?jelly escape-by-default='true'?>
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler" xmlns:d="jelly:define" xmlns:l="/lib/layout" xmlns:t="/lib/hudson" xmlns:f="/lib/form">
+  <!--
+    This Jelly script is used to produce the global configuration option.
+
+    Hudson uses a set of tag libraries to provide uniformity in forms.
+    To determine where this tag is defined, first check the namespace URI,
+    and then look under $HUDSON/views/. For example, <f:section> is defined
+    in $HUDSON/views/lib/form/section.jelly.
+
+    It's also often useful to just check other similar scripts to see what
+    tags they use. Views are always organized according to its owner class,
+    so it should be straightforward to find them.
+  -->
+  
+  	<f:section title="Simple Console Filter Configuration">
+  	
+  		<!-- Determines whether the console log filter is enabled -->
+  		<f:entry title="Enabled" field="enabled">
+  			<f:checkbox checked="${enabled}" />
+  		</f:entry>
+
+		<!-- Defines the regexp patterns to filter the console logs -->
+		<f:entry title="Custom filter regular expressions" field="regexes">
+			<f:repeatable name="Regexp" field="regexes">
+				<table width="100%">
+					<tr>
+						<td width="10%" align="right">Name</td>
+						<td width="20%">
+							<f:textbox field="name" />
+						</td>
+
+                        <td width="10%" align="right">Regex</td>
+                        <td width="20%">
+                            <f:textbox field="regex" />
+                        </td>
+
+                        <td width="5%" align="right">Enabled</td>
+                        <td width="5%">
+                            <f:checkbox field="regexEnabled" checked="${regexEnabled}" />
+                        </td>
+                        <td width="20%" align="right"><f:repeatableDeleteButton/></td>
+					</tr>
+
+				</table>
+			</f:repeatable>
+		</f:entry>
+
+	</f:section>
+	
+</j:jelly>
+
+
+  

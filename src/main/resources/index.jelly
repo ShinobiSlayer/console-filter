@@ -1,0 +1,4 @@
+<?jelly escape-by-default='true'?>
+<div>
+	Allows specifying patterns to mask console output.
+</div>

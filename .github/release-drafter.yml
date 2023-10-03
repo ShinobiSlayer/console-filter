@@ -1,0 +1,2 @@
+_extends: .github
+tag-template: console-filter-$NEXT_MINOR_VERSION
