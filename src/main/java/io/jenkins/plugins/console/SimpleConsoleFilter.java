@@ -57,10 +57,10 @@ public class SimpleConsoleFilter implements Filter {
 
         SimpleConsoleFilterConfig config = configWrapper.get();
         if (isEnabled(config)) {
-            LOGGER.log(Level.INFO, "Simple Console Log filtering enabled: true");
+            LOGGER.log(Level.FINEST, "Simple Console Log filtering enabled: true");
             filterConsoleLog(httpServletRequest, httpServletResponse, chain, config);
         } else {
-            LOGGER.log(Level.INFO, "Simple Console Log filtering enabled: false");
+            LOGGER.log(Level.FINEST, "Simple Console Log filtering enabled: false");
             chain.doFilter(request, response);
         }
     }
@@ -75,7 +75,7 @@ public class SimpleConsoleFilter implements Filter {
             SimpleConsoleFilterConfig config)
             throws IOException, ServletException {
         String requestUri = httpServletRequest.getRequestURI();
-        LOGGER.log(Level.INFO, "Request Uri: " + requestUri);
+        LOGGER.log(Level.FINEST, "Request Uri: " + requestUri);
         if (isFilterRequired(requestUri, config)) {
             handleConsoleLog(httpServletRequest, httpServletResponse, chain);
         } else {
@@ -129,7 +129,7 @@ public class SimpleConsoleFilter implements Filter {
         for (RegexName regex : regexes) {
             boolean matched = regex.getCompiledRegex().matcher(requestUri).find();
             LOGGER.log(
-                    Level.INFO,
+                    Level.FINEST,
                     String.format(
                             "Request Uri: %s Matched: %s Name: %s Regex: %s Enabled: %s",
                             requestUri,
@@ -141,16 +141,16 @@ public class SimpleConsoleFilter implements Filter {
                 return true;
             }
         }
-        LOGGER.log(Level.INFO, String.format("Request Uri: %s did not match any regex", requestUri));
+        LOGGER.log(Level.FINEST, String.format("Request Uri: %s did not match any regex", requestUri));
         return false;
     }
 
     private List<RegexName> findRegexes(SimpleConsoleFilterConfig config) {
         if (CollectionUtils.isNotEmpty(config.getRegexes())) {
-            LOGGER.log(Level.INFO, "Regexes have been supplied.");
+            LOGGER.log(Level.FINEST, "Regexes have been supplied.");
             return config.getRegexes();
         }
-        LOGGER.log(Level.INFO, "Regexes have not been supplied. Falling back to default regex.");
+        LOGGER.log(Level.FINEST, "Regexes have not been supplied. Falling back to default regex.");
         return DEFAULT_PATH_REGEX;
     }
 
