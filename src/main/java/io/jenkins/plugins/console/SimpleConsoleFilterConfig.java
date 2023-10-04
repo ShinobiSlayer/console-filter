@@ -1,30 +1,23 @@
 package io.jenkins.plugins.console;
 
 import hudson.Extension;
-import hudson.util.PersistedList;
-import java.io.Serializable;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import jenkins.model.GlobalConfiguration;
+import net.sf.json.JSONObject;
 import org.kohsuke.stapler.DataBoundSetter;
+import org.kohsuke.stapler.StaplerRequest;
 
-/**
- * This class deals with the plugin configuration and persistence of the data.
- *
- * @author ccapdevi
- *
- */
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 @Extension
 public class SimpleConsoleFilterConfig extends GlobalConfiguration implements Serializable {
 
     private static final long serialVersionUID = 5850114662289551496L;
 
-    private static final Logger LOGGER = Logger.getLogger(SimpleConsoleFilterConfig.class.getName());
-
     private boolean enabled;
 
-    private List<RegexName> regexes = new PersistedList<>(this);
+    private List<RegexName> regexes = new ArrayList<>();
 
     public SimpleConsoleFilterConfig() {
         load();
@@ -50,15 +43,14 @@ public class SimpleConsoleFilterConfig extends GlobalConfiguration implements Se
         save();
     }
 
-    public static SimpleConsoleFilterConfig get() {
-        final SimpleConsoleFilterConfig config;
-        try {
-            config = GlobalConfiguration.all().get(SimpleConsoleFilterConfig.class);
-        } catch (IllegalStateException e) {
-            LOGGER.log(Level.SEVERE, "Config not found! " + e);
-            throw e;
-        }
-        LOGGER.log(Level.INFO, "Found config.");
-        return config;
+    @Override
+    public boolean configure(final StaplerRequest req, final JSONObject formData) {
+        setRegexes(req.bindJSONToList(RegexName.class, formData.get("regexes")));
+        setEnabled(formData.getBoolean("enabled"));
+        return true;
+    }
+
+    public static SimpleConsoleFilterConfig get(){
+        return GlobalConfiguration.all().get(SimpleConsoleFilterConfig.class);
     }
 }

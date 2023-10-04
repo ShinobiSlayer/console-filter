@@ -24,6 +24,7 @@ public class SimpleConsoleFilter implements Filter {
     private static final List<RegexName> DEFAULT_PATH_REGEX =
             Arrays.asList(new RegexName("Default regex", "/.*/console(Full)?$", true));
     private static final Logger LOGGER = Logger.getLogger(SimpleConsoleFilter.class.getName());
+    private static final Level LEVEL = Level.INFO;
 
     private SimpleConsoleFilterConfigWrapper configWrapper;
     private HttpServletResponseAdapter httpServletResponseAdapter;
@@ -40,13 +41,13 @@ public class SimpleConsoleFilter implements Filter {
 
     @Initializer
     public static void init() throws ServletException {
-        LOGGER.log(Level.INFO, "Adding SimpleConsoleFilter to PluginServlet Filter");
+        LOGGER.log(LEVEL, "Adding SimpleConsoleFilter to PluginServlet Filter");
         PluginServletFilter.addFilter(new SimpleConsoleFilter());
     }
 
     @Override
     public void init(FilterConfig filterConfig) {
-        LOGGER.log(Level.INFO, "Initializing SimpleConsoleFilter");
+        LOGGER.log(LEVEL, "Initializing SimpleConsoleFilter");
     }
 
     @Override
@@ -57,10 +58,10 @@ public class SimpleConsoleFilter implements Filter {
 
         SimpleConsoleFilterConfig config = configWrapper.get();
         if (isEnabled(config)) {
-            LOGGER.log(Level.FINEST, "Simple Console Log filtering enabled: true");
+            LOGGER.log(LEVEL, "Simple Console Log filtering enabled: true");
             filterConsoleLog(httpServletRequest, httpServletResponse, chain, config);
         } else {
-            LOGGER.log(Level.FINEST, "Simple Console Log filtering enabled: false");
+            LOGGER.log(LEVEL, "Simple Console Log filtering enabled: false");
             chain.doFilter(request, response);
         }
     }
@@ -75,7 +76,7 @@ public class SimpleConsoleFilter implements Filter {
             SimpleConsoleFilterConfig config)
             throws IOException, ServletException {
         String requestUri = httpServletRequest.getRequestURI();
-        LOGGER.log(Level.FINEST, "Request Uri: " + requestUri);
+        LOGGER.log(LEVEL, "Request Uri: " + requestUri);
         if (isFilterRequired(requestUri, config)) {
             handleConsoleLog(httpServletRequest, httpServletResponse, chain);
         } else {
@@ -93,6 +94,7 @@ public class SimpleConsoleFilter implements Filter {
                     responseWrapper.getContentAsByteArray(), responseWrapper.getCharacterEncoding());
             String filteredHtml = filterHtml(html);
             httpServletResponse.setContentLength(filteredHtml.length());
+            LOGGER.log(LEVEL, "Filtered Html: \n" + filteredHtml);
             httpServletResponse.getWriter().write(filteredHtml);
             httpServletResponse.getWriter().flush();
         } catch (Exception e) {
@@ -129,7 +131,7 @@ public class SimpleConsoleFilter implements Filter {
         for (RegexName regex : regexes) {
             boolean matched = regex.getCompiledRegex().matcher(requestUri).find();
             LOGGER.log(
-                    Level.FINEST,
+                    LEVEL,
                     String.format(
                             "Request Uri: %s Matched: %s Name: %s Regex: %s Enabled: %s",
                             requestUri,
@@ -141,16 +143,16 @@ public class SimpleConsoleFilter implements Filter {
                 return true;
             }
         }
-        LOGGER.log(Level.FINEST, String.format("Request Uri: %s did not match any regex", requestUri));
+        LOGGER.log(LEVEL, String.format("Request Uri: %s did not match any regex", requestUri));
         return false;
     }
 
     private List<RegexName> findRegexes(SimpleConsoleFilterConfig config) {
         if (CollectionUtils.isNotEmpty(config.getRegexes())) {
-            LOGGER.log(Level.FINEST, "Regexes have been supplied.");
+            LOGGER.log(LEVEL, "Regexes have been supplied.");
             return config.getRegexes();
         }
-        LOGGER.log(Level.FINEST, "Regexes have not been supplied. Falling back to default regex.");
+        LOGGER.log(LEVEL, "Regexes have not been supplied. Falling back to default regex.");
         return DEFAULT_PATH_REGEX;
     }
 
