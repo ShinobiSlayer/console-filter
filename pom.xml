@@ -11,7 +11,7 @@
   <artifactId>console-filter</artifactId>
   <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
-  <name>TODO Plugin</name>
+  <name>Console Filter Plugin</name>
   <url>https://github.com/ShinobiSlayer/console-filter-plugin</url>
   <licenses>
     <license>
